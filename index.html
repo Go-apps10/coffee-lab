@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Coffee Lab | توليفات بن مختصة</title>
+  <meta name="description" content="Coffee Lab — توليفات بن طازة بتتحمص على الطلب. اختار توليفتك أو اعمل توليفتك الخاصة في المعمل.">
+  <meta property="og:title" content="Coffee Lab | توليفات بن مختصة">
+  <meta property="og:description" content="توليفات بن طازة بتتحمص على الطلب. اعمل توليفتك الخاصة.">
+  <meta name="theme-color" content="#2b1a12">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="lab.css">
+</head>
+<body>
+
+<header class="nav" id="top">
+  <div class="container nav-inner">
+    <a href="#top" class="logo" aria-label="Coffee Lab">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M15 4h10v3h-2v9l9 15a4 4 0 0 1-3.4 6H11.4A4 4 0 0 1 8 31l9-15V7h-2z" fill="currentColor"/><path d="M12.5 27h15l2.6 4.3a1.3 1.3 0 0 1-1.1 2H11a1.3 1.3 0 0 1-1.1-2z" fill="#c8894b"/></svg>
+      <span>Coffee<b>Lab</b></span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#shop">التوليفات</a>
+      <a href="#lab">اعمل توليفتك</a>
+      <a href="#how">إزاي بنشتغل</a>
+      <a href="#faq">أسئلة</a>
+      <a href="#contact">تواصل</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="cart-btn" id="cartBtn" aria-label="السلة">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12zM6 6 5 3H2M9 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="menu-btn" id="menuBtn" aria-label="القائمة"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <span class="eyebrow">بن طازة · بيتحمص على الطلب</span>
+        <h1>كل فنجان<br><em>تجربة معملية.</em></h1>
+        <p>في Coffee Lab بنختار أحسن حبوب البن من إثيوبيا وكولومبيا والبرازيل واليمن، ونوزنها بالجرام عشان نطلعلك توليفة مظبوطة على مزاجك.</p>
+        <div class="hero-cta">
+          <a href="#shop" class="btn btn-primary">تسوّق التوليفات</a>
+          <a href="#lab" class="btn btn-ghost">اعمل توليفتك 🧪</a>
+        </div>
+        <ul class="hero-stats">
+          <li><b>48</b><span>ساعة من التحميص للتوصيل</span></li>
+          <li><b>6</b><span>توليفات أساسية</span></li>
+          <li><b>∞</b><span>توليفات بتعملها انت</span></li>
+        </ul>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="flask">
+          <div class="flask-liquid"></div>
+          <span class="bubble b1"></span><span class="bubble b2"></span><span class="bubble b3"></span>
+        </div>
+        <div class="bean bean-1"></div><div class="bean bean-2"></div><div class="bean bean-3"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STRIP -->
+  <section class="strip">
+    <div class="container strip-inner">
+      <span>☕ تحميص يومي</span><span>🚚 توصيل لكل المحافظات</span><span>⚖️ طحن حسب أداتك</span><span>💵 الدفع عند الاستلام</span>
+    </div>
+  </section>
+
+  <!-- SHOP -->
+  <section class="section" id="shop">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">المنيو</span>
+        <h2>توليفات المعمل</h2>
+        <p>كل توليفة متجربة عشرات المرات لحد ما وصلنا للنسبة الصح.</p>
+      </div>
+      <div class="filters" id="filters">
+        <button class="chip active" data-filter="all">الكل</button>
+        <button class="chip" data-filter="فاتح">تحميص فاتح</button>
+        <button class="chip" data-filter="وسط">تحميص وسط</button>
+        <button class="chip" data-filter="غامق">تحميص غامق</button>
+      </div>
+      <div class="grid" id="productGrid"></div>
+    </div>
+  </section>
+
+  <!-- LAB / BLEND EXPERIMENT -->
+  <section class="section lab" id="lab">
+    <div class="container">
+      <div class="section-head light">
+        <span class="eyebrow">المعمل</span>
+        <h2>البس البالطو… وابدأ تجربتك 🥼</h2>
+        <p>انت الكيميائي النهارده. اختار العينات، حمّصها على النار، اطحنها، وسيب المعمل يحللك النكهة قبل ما نجهزها ونبعتهالك.</p>
+      </div>
+
+      <div class="lab-app">
+        <ol class="lab-steps" id="labSteps">
+          <li><button data-step="0"><i>01</i>العينات</button></li>
+          <li><button data-step="1"><i>02</i>التحميص</button></li>
+          <li><button data-step="2"><i>03</i>الطحن</button></li>
+          <li><button data-step="3"><i>04</i>التحليل</button></li>
+        </ol>
+
+        <div class="lab-bench">
+          <div class="lab-stage">
+
+            <!-- 1. Samples -->
+            <div class="stage" data-stage="0">
+              <p class="stage-hint">كل مغرفة = <b>10%</b>. اضغط على البرطمان عشان تصب منه في الدورق — املاه لحد <b>100%</b> من 3 أنواع بالكتير.</p>
+              <div class="shelf" id="shelf"></div>
+              <div class="mix-area">
+                <div class="beaker-wrap">
+                  <div class="pour" id="pour"></div>
+                  <div class="beaker-big">
+                    <div class="beaker-marks"><span>100</span><span>75</span><span>50</span><span>25</span></div>
+                    <div class="beaker-fill" id="beakerFill"></div>
+                    <b class="beaker-pct" id="beakerPct">0%</b>
+                  </div>
+                </div>
+                <div class="mix-list" id="mixList"></div>
+              </div>
+            </div>
+
+            <!-- 2. Roasting -->
+            <div class="stage" data-stage="1" hidden>
+              <p class="stage-hint">حرّك المؤشر عشان تتحكم في حرارة المحمصة — وراقب لون البن بيتغير.</p>
+              <div class="roast-rig">
+                <div class="roaster">
+                  <div class="drum"><div class="drum-inner" id="drumBeans"></div></div>
+                  <div class="flames" id="flames"><i></i><i></i><i></i><i></i><i></i></div>
+                </div>
+                <div class="thermo">
+                  <div class="thermo-tube"><div class="thermo-fill" id="thermoFill"></div></div>
+                  <div><b id="temp">212°C</b><span id="roastLabel">وسط</span></div>
+                </div>
+              </div>
+              <input type="range" id="roastSlider" min="0" max="100" value="50" aria-label="درجة التحميص">
+              <div class="roast-scale"><span>فاتح</span><span>وسط</span><span>غامق</span></div>
+              <p class="stage-note" id="roastNote"></p>
+            </div>
+
+            <!-- 3. Grinding -->
+            <div class="stage" data-stage="2" hidden>
+              <p class="stage-hint">اختار الطحنة على حسب الأداة اللي بتحضّر بيها.</p>
+              <div class="grind-rig">
+                <div class="grinder" id="grinder">
+                  <div class="hopper"></div>
+                  <div class="grinder-body"><div class="dial" id="grindDial"><span></span></div></div>
+                  <div class="spout"></div>
+                </div>
+                <div class="tray" id="grounds"></div>
+              </div>
+              <div class="grind-opts" id="grindOpts"></div>
+              <p class="stage-note" id="grindNote"></p>
+            </div>
+
+            <!-- 4. Analysis -->
+            <div class="stage" data-stage="3" hidden>
+              <div class="analyzing" id="analyzing">
+                <div class="spinner-flask"><span></span><span></span><span></span></div>
+                <p id="analyzeText">جاري تحليل العينة…</p>
+              </div>
+              <div class="report" id="report" hidden>
+                <div class="radar-box">
+                  <svg viewBox="-150 -140 300 290" class="radar" id="radar" aria-label="بصمة النكهة"></svg>
+                  <p class="radar-sum" id="radarSum"></p>
+                </div>
+                <div class="report-card">
+                  <div class="report-head"><span>تقرير المعمل</span><b id="reportNo"></b></div>
+                  <ul class="report-list" id="reportList"></ul>
+                  <label class="field"><span>سمّي اكتشافك</span><input id="labName" maxlength="30" placeholder="مثلاً: معادلة الصبح"></label>
+                  <label class="field"><span>الكمية</span><select id="labWeight"></select></label>
+                  <div class="lab-price"><span>السعر</span><b id="labPrice">—</b></div>
+                  <button class="btn btn-primary btn-block" id="labAdd">جهّزلي التجربة دي 🧪</button>
+                  <button class="link-btn" id="labReset">ابدأ تجربة جديدة</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="notebook">
+            <div class="nb-head"><h4>دفتر التجربة</h4><span id="expNo"></span></div>
+            <ul id="nbList"></ul>
+          </aside>
+        </div>
+
+        <div class="lab-nav">
+          <button class="btn btn-ghost light" id="labBack">→ رجوع</button>
+          <button class="btn btn-primary" id="labNext">الخطوة الجاية ←</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section class="section" id="how">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">الخطوات</span>
+        <h2>من المزرعة لفنجانك</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><span>01</span><h4>بنختار الحبوب</h4><p>بن أخضر مختص من مزارع معروفة، بنتذوقه قبل ما نشتريه.</p></div>
+        <div class="step"><span>02</span><h4>بنحمّص على الطلب</h4><p>مفيش مخزون قديم. طلبك بيتحمص بعد ما تأكده.</p></div>
+        <div class="step"><span>03</span><h4>بنطحن على أداتك</h4><p>تركي، إسبريسو، فلتر أو فرنش برس — أو حبوب كاملة.</p></div>
+        <div class="step"><span>04</span><h4>بنوصّلك طازة</h4><p>تغليف بصمام لحفظ النكهة، وتوصيل خلال 2–4 أيام.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="section alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">آراء</span>
+        <h2>بيقولوا علينا إيه</h2>
+        <p class="muted small">⚠️ آراء تجريبية — استبدلها بآراء عملائك الحقيقية.</p>
+      </div>
+      <div class="reviews">
+        <blockquote><p>"توليفة الإسبريسو بقت أساسية عندي في البيت، الكريما تحفة."</p><cite>— عميل تجريبي</cite></blockquote>
+        <blockquote><p>"عملت توليفتي الخاصة بإثيوبي ويمني والنتيجة فاقت توقعاتي."</p><cite>— عميل تجريبي</cite></blockquote>
+        <blockquote><p>"البن وصل ريحته طالعة من الكرتونة. التوصيل كان سريع."</p><cite>— عميل تجريبي</cite></blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="container narrow">
+      <div class="section-head">
+        <span class="eyebrow">أسئلة شائعة</span>
+        <h2>عندك سؤال؟</h2>
+      </div>
+      <details><summary>البن بيفضل طازة قد إيه؟</summary><p>أحسن طعم بيكون من 5 لـ 30 يوم من تاريخ التحميص. احفظه في مكان ناشف بعيد عن الشمس، والكيس مقفول كويس.</p></details>
+      <details><summary>إزاي أعرف أطلب طحنة إيه؟</summary><p>التركي محتاج طحنة ناعمة جداً، الإسبريسو ناعمة، الفلتر/V60 متوسطة، والفرنش برس خشنة. لو مش متأكد اطلب حبوب واطحن قبل التحضير.</p></details>
+      <details><summary>التوصيل بياخد قد إيه وبكام؟</summary><p>القاهرة والجيزة 1–2 يوم، باقي المحافظات 2–4 أيام. الشحن <span data-shipping></span>، ومجاني للطلبات فوق <span data-free></span>.</p></details>
+      <details><summary>طرق الدفع إيه؟</summary><p>كاش عند الاستلام، إنستاباي، أو فودافون كاش.</p></details>
+      <details><summary>ممكن أرجّع الطلب؟</summary><p>لأن البن بيتحمص ويتطحن مخصوص ليك، مش بنقبل مرتجع إلا لو في مشكلة في الطلب نفسه — ساعتها هنبدله فوراً.</p></details>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section contact" id="contact">
+    <div class="container contact-inner">
+      <div>
+        <h2>كلّمنا</h2>
+        <p>عندك طلب جملة لكافيه أو مكتب؟ أو محتاج ترشيح توليفة؟ ابعتلنا.</p>
+      </div>
+      <div class="contact-links">
+        <a class="btn btn-primary" id="waLink" target="_blank" rel="noopener">واتساب</a>
+        <a class="btn btn-ghost light" id="igLink" target="_blank" rel="noopener">إنستجرام</a>
+        <a class="btn btn-ghost light" id="mailLink">إيميل</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© <span id="year"></span> Coffee Lab. كل الحقوق محفوظة.</span>
+    <a href="#top">لفوق ↑</a>
+  </div>
+</footer>
+
+<!-- PRODUCT OPTIONS MODAL -->
+<div class="modal" id="productModal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="pmTitle">
+    <button class="close" data-close aria-label="إغلاق">×</button>
+    <div class="pm-head">
+      <div class="bag small" id="pmBag"></div>
+      <div><h3 id="pmTitle"></h3><p class="muted" id="pmNotes"></p></div>
+    </div>
+    <label class="field"><span>الطحنة</span><select id="pmGrind"></select></label>
+    <label class="field"><span>الوزن</span><select id="pmWeight"></select></label>
+    <div class="qty-row">
+      <span>الكمية</span>
+      <div class="qty"><button data-q="-1">−</button><b id="pmQty">1</b><button data-q="1">+</button></div>
+    </div>
+    <button class="btn btn-primary btn-block" id="pmAdd">أضف للسلة — <span id="pmPrice"></span></button>
+  </div>
+</div>
+
+<!-- CART DRAWER -->
+<div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+<aside class="drawer" id="cartDrawer" aria-label="السلة">
+  <div class="drawer-head">
+    <h3>سلتك</h3>
+    <button class="close" id="cartClose" aria-label="إغلاق">×</button>
+  </div>
+  <div class="drawer-body" id="cartItems"></div>
+  <div class="drawer-foot">
+    <div class="ship-bar"><div id="shipFill"></div></div>
+    <p class="small muted" id="shipMsg"></p>
+    <div class="sum"><span>المجموع</span><b id="cartSubtotal">0</b></div>
+    <button class="btn btn-primary btn-block" id="checkoutBtn">إتمام الطلب</button>
+  </div>
+</aside>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal" id="checkoutModal" hidden>
+  <form class="modal-box" id="checkoutForm" role="dialog" aria-modal="true" aria-labelledby="coTitle">
+    <button type="button" class="close" data-close aria-label="إغلاق">×</button>
+    <h3 id="coTitle">بيانات التوصيل</h3>
+    <label class="field"><span>الاسم *</span><input name="name" required autocomplete="name"></label>
+    <label class="field"><span>رقم الموبايل *</span><input name="phone" required type="tel" pattern="01[0-9]{9}" placeholder="01xxxxxxxxx" autocomplete="tel"></label>
+    <div class="row-2">
+      <label class="field"><span>المحافظة *</span><select name="city" required id="citySelect"></select></label>
+      <label class="field"><span>المنطقة *</span><input name="area" required></label>
+    </div>
+    <label class="field"><span>العنوان بالتفصيل *</span><input name="address" required autocomplete="street-address" placeholder="الشارع، رقم العمارة، الدور، الشقة"></label>
+    <label class="field"><span>طريقة الدفع</span>
+      <select name="payment"><option>كاش عند الاستلام</option><option>إنستاباي</option><option>فودافون كاش</option></select>
+    </label>
+    <label class="field"><span>ملاحظات</span><textarea name="notes" rows="2"></textarea></label>
+    <div class="totals" id="coTotals"></div>
+    <button class="btn btn-primary btn-block" type="submit">أكّد الطلب على واتساب</button>
+    <p class="small muted center">هيتفتح واتساب برسالة فيها تفاصيل طلبك، اضغط إرسال.</p>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="config.js"></script>
+<script src="script.js"></script>
+<script src="lab.js"></script>
+</body>
+</html>
