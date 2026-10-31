@@ -231,3 +231,10 @@ details p { color: var(--muted); margin: .8rem 0 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* Account button + order success (accounts enabled via firebase-config.js) */
+.account-btn { display: inline-flex; align-items: center; gap: .4rem; height: 46px; padding: 0 1rem; border-radius: 999px; border: 1px solid var(--line); background: #fff; font-weight: 700; font-size: .9rem; }
+.account-btn[hidden] { display: none; }
+.account-btn svg { width: 20px; }
+.success-icon { width: 72px; height: 72px; margin: .6rem auto 1rem; border-radius: 50%; background: var(--mint); color: #fff; font-size: 2.2rem; display: grid; place-items: center; animation: pop .4s ease-out; }
+@media (max-width: 760px) { .account-btn span { display: none; } .account-btn { width: 46px; padding: 0; justify-content: center; } }

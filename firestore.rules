@@ -1,0 +1,47 @@
+rules_version = '2';
+
+// انسخ الملف ده كله في Firebase Console ← Firestore Database ← Rules ← Publish
+// غيّر admin@example.com لإيميل الأدمن (نفس اللي في firebase-config.js)
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in ['admin@example.com'];
+    }
+
+    // بيانات العميل: كل واحد يشوف ويعدّل بياناته بس
+    match /users/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+      allow read: if isAdmin();
+    }
+
+    match /orders/{orderId} {
+      // العميل يعمل طلب باسمه بس، وحالته لازم تبدأ "جديد"
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'جديد'
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.items.size() <= 50
+        && request.resource.data.total is number
+        && request.resource.data.keys().hasOnly(['uid', 'email', 'number', 'items', 'subtotal', 'shipping', 'total',
+                                                 'customer', 'payment', 'notes', 'status', 'createdAt']);
+
+      // العميل يشوف طلباته بس — الأدمن يشوف الكل
+      allow read: if signedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+
+      // العميل يقدر يلغي طلبه وهو لسه "جديد" بس
+      allow update: if signedIn()
+        && resource.data.uid == request.auth.uid
+        && resource.data.status == 'جديد'
+        && request.resource.data.status == 'ملغي'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']);
+
+      // الأدمن يغيّر الحالة أو يمسح
+      allow update, delete: if isAdmin();
+    }
+  }
+}

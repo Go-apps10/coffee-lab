@@ -31,6 +31,10 @@
       <a href="#contact">تواصل</a>
     </nav>
     <div class="nav-actions">
+      <a href="account.html" class="account-btn" id="accountBtn" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span id="accountName">دخول</span>
+      </a>
       <button class="cart-btn" id="cartBtn" aria-label="السلة">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12zM6 6 5 3H2M9 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span class="cart-count" id="cartCount">0</span>
@@ -322,14 +326,27 @@
     </label>
     <label class="field"><span>ملاحظات</span><textarea name="notes" rows="2"></textarea></label>
     <div class="totals" id="coTotals"></div>
-    <button class="btn btn-primary btn-block" type="submit">أكّد الطلب على واتساب</button>
-    <p class="small muted center">هيتفتح واتساب برسالة فيها تفاصيل طلبك، اضغط إرسال.</p>
+    <button class="btn btn-primary btn-block" type="submit" id="coSubmit">أكّد الطلب على واتساب</button>
+    <p class="small muted center" id="coNote">هيتفتح واتساب برسالة فيها تفاصيل طلبك، اضغط إرسال.</p>
   </form>
+</div>
+
+<!-- ORDER PLACED -->
+<div class="modal" id="successModal" hidden>
+  <div class="modal-box center" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+    <button class="close" data-close aria-label="إغلاق">×</button>
+    <div class="success-icon">✓</div>
+    <h3 id="successTitle">طلبك وصلنا! ☕</h3>
+    <p class="muted">رقم الطلب <b id="successNo" class="order-no"></b><br>هنكلمك على الموبايل نأكد معاك ونبدأ التحميص.</p>
+    <a href="account.html" class="btn btn-primary btn-block">تابع طلبك</a>
+  </div>
 </div>
 
 <div class="toast" id="toast" role="status"></div>
 
 <script src="config.js"></script>
+<script src="firebase-config.js"></script>
+<script type="module" src="firebase.js"></script>
 <script src="script.js"></script>
 <script src="lab.js"></script>
 </body>

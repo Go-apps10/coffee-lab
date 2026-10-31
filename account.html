@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>حسابي | Coffee Lab</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#2b1a12">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+</head>
+<body class="page">
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo" aria-label="Coffee Lab">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M15 4h10v3h-2v9l9 15a4 4 0 0 1-3.4 6H11.4A4 4 0 0 1 8 31l9-15V7h-2z" fill="currentColor"/><path d="M12.5 27h15l2.6 4.3a1.3 1.3 0 0 1-1.1 2H11a1.3 1.3 0 0 1-1.1-2z" fill="#c8894b"/></svg>
+      <span>Coffee<b>Lab</b></span>
+    </a>
+    <a href="index.html" class="btn btn-ghost btn-sm">← رجوع للمتجر</a>
+  </div>
+</header>
+
+<main class="container page-main">
+  <div class="loading" id="loading"><span class="spin"></span>بنحمّل حسابك…</div>
+
+  <!-- Accounts not configured yet -->
+  <section class="card-box narrow-box" id="disabledView" hidden>
+    <h1>الحسابات لسه متفعلتش</h1>
+    <p class="muted">صاحب الموقع لسه مكمّلش إعدادات Firebase. لحد ما يحصل، تقدر تطلب عادي من المتجر والطلب هيتبعت على واتساب.</p>
+    <a href="index.html" class="btn btn-primary">رجوع للمتجر</a>
+  </section>
+
+  <!-- Signed out -->
+  <section class="card-box narrow-box auth-box" id="authView" hidden>
+    <div class="auth-head">
+      <div class="auth-icon">🧪</div>
+      <h1 id="authTitle">أهلاً بيك في المعمل</h1>
+      <p class="muted">سجّل دخول عشان تتابع طلباتك وتطلب أسرع.</p>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button role="tab" class="active" data-tab="login">تسجيل دخول</button>
+      <button role="tab" data-tab="register">حساب جديد</button>
+    </div>
+
+    <button class="btn btn-google btn-block" id="googleBtn" type="button">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+      كمّل بحساب Google
+    </button>
+    <div class="or"><span>أو بالإيميل</span></div>
+
+    <form id="loginForm" class="auth-form">
+      <label class="field"><span>الإيميل</span><input name="email" type="email" required autocomplete="email"></label>
+      <label class="field"><span>الباسورد</span><input name="password" type="password" required minlength="6" autocomplete="current-password"></label>
+      <button class="btn btn-primary btn-block" type="submit">دخول</button>
+      <button class="link-btn" type="button" id="forgotBtn">نسيت الباسورد؟</button>
+    </form>
+
+    <form id="registerForm" class="auth-form" hidden>
+      <label class="field"><span>الاسم</span><input name="name" required autocomplete="name"></label>
+      <label class="field"><span>الإيميل</span><input name="email" type="email" required autocomplete="email"></label>
+      <label class="field"><span>الباسورد (6 حروف على الأقل)</span><input name="password" type="password" required minlength="6" autocomplete="new-password"></label>
+      <button class="btn btn-primary btn-block" type="submit">اعمل حساب</button>
+    </form>
+    <p class="form-msg" id="authMsg" role="alert"></p>
+  </section>
+
+  <!-- Signed in -->
+  <section id="userView" hidden>
+    <div class="page-head">
+      <div>
+        <span class="eyebrow">حسابي</span>
+        <h1 id="hello">أهلاً!</h1>
+        <p class="muted" id="userEmail"></p>
+      </div>
+      <div class="head-actions">
+        <a href="admin.html" class="btn btn-ghost btn-sm" id="adminLink" hidden>لوحة الأدمن</a>
+        <button class="btn btn-ghost btn-sm" id="signOutBtn">تسجيل خروج</button>
+      </div>
+    </div>
+
+    <div class="account-grid">
+      <div class="card-box">
+        <h2>طلباتي</h2>
+        <div id="myOrders" class="orders-list"><p class="muted">بنحمّل طلباتك…</p></div>
+      </div>
+
+      <form class="card-box" id="profileForm">
+        <h2>بيانات التوصيل</h2>
+        <p class="muted small">بنستخدمها عشان نملالك بيانات الطلب أوتوماتيك.</p>
+        <label class="field"><span>الاسم</span><input name="name" autocomplete="name"></label>
+        <label class="field"><span>رقم الموبايل</span><input name="phone" type="tel" pattern="01[0-9]{9}" placeholder="01xxxxxxxxx" autocomplete="tel"></label>
+        <label class="field"><span>المحافظة</span><select name="city" id="profileCity"></select></label>
+        <label class="field"><span>المنطقة</span><input name="area"></label>
+        <label class="field"><span>العنوان بالتفصيل</span><input name="address" autocomplete="street-address"></label>
+        <button class="btn btn-primary btn-block" type="submit">حفظ</button>
+        <p class="form-msg" id="profileMsg" role="status"></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="config.js"></script>
+<script src="firebase-config.js"></script>
+<script type="module" src="firebase.js"></script>
+<script src="common.js"></script>
+<script src="account.js"></script>
+</body>
+</html>

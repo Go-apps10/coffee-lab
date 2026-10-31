@@ -181,21 +181,83 @@
   $("#drawerBackdrop").addEventListener("click", closeCart);
   renderCart();
 
-  /* ---------- Checkout via WhatsApp ---------- */
-  $("#checkoutBtn").addEventListener("click", () => {
+  /* ---------- Accounts (firebase.js) ---------- */
+  const clReady = new Promise((r) => (window.CL ? r(window.CL) : document.addEventListener("cl-ready", () => r(window.CL), { once: true })));
+  const accountsOn = () => !!window.CL?.enabled;
+
+  clReady.then((CL) => {
+    if (!CL.enabled) return;
+    $("#accountBtn").hidden = false;
+    $("#coSubmit").textContent = "أكّد الطلب";
+    $("#coNote").textContent = "هتقدر تتابع حالة طلبك من صفحة حسابي.";
+    CL.onUser((u) => {
+      const first = (CL.profile?.name || u?.displayName || "").split(" ")[0];
+      $("#accountName").textContent = u ? first || "حسابي" : "دخول";
+    });
+    // coming back from the login page in the middle of checkout
+    if (location.hash === "#checkout") {
+      history.replaceState(null, "", location.pathname);
+      if (CL.user && cart.length) startCheckout();
+    }
+  });
+
+  /* ---------- Checkout ---------- */
+  function startCheckout() {
     const sub = subtotal(), ship = shippingFor(sub);
     $("#coTotals").innerHTML = `
       <div><span>المنتجات</span><span>${money(sub)}</span></div>
       <div><span>الشحن</span><span>${ship ? money(ship) : "مجاني"}</span></div>
       <div class="grand"><span>الإجمالي</span><span>${money(sub + ship)}</span></div>`;
+    const p = accountsOn() && window.CL.user ? { name: window.CL.user.displayName, ...window.CL.profile } : null;
+    if (p) {
+      const f = $("#checkoutForm").elements;
+      ["name", "phone", "city", "area", "address"].forEach((k) => { if (p[k] && !f[k].value) f[k].value = p[k]; });
+    }
     closeCart();
     openModal($("#checkoutModal"));
+  }
+
+  $("#checkoutBtn").addEventListener("click", () => {
+    if (accountsOn() && !window.CL.user) {
+      closeCart();
+      toast("سجّل دخول الأول عشان نحفظ طلبك 🔐");
+      setTimeout(() => (location.href = "account.html?next=index.html%23checkout"), 900);
+      return;
+    }
+    startCheckout();
   });
 
-  $("#checkoutForm").addEventListener("submit", (e) => {
+  $("#checkoutForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const f = Object.fromEntries(new FormData(e.target));
     const sub = subtotal(), ship = shippingFor(sub);
+
+    if (accountsOn() && window.CL.user) {
+      const btn = $("#coSubmit");
+      btn.disabled = true;
+      try {
+        const customer = { name: f.name, phone: f.phone, city: f.city, area: f.area, address: f.address };
+        const number = await window.CL.createOrder({
+          items: cart.map(({ name, details, qty, unit }) => ({ name, details, qty, unit })),
+          subtotal: sub, shipping: ship, total: sub + ship,
+          customer, payment: f.payment, notes: f.notes || "",
+        });
+        window.CL.saveProfile(customer).catch(() => {});
+        cart = [];
+        saveCart();
+        e.target.reset();
+        closeModal($("#checkoutModal"));
+        $("#successNo").textContent = number;
+        openModal($("#successModal"));
+      } catch (err) {
+        toast(err.message);
+      } finally {
+        btn.disabled = false;
+      }
+      return;
+    }
+
+    // accounts not configured: send the order over WhatsApp
     const orderNo = "CL-" + Date.now().toString().slice(-6);
     const lines = [
       `*طلب جديد من Coffee Lab* — ${orderNo}`,
