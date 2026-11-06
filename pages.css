@@ -123,3 +123,36 @@
   .track { font-size: .65rem; }
   #search { max-width: none; }
 }
+
+/* Touch + phones */
+@media (pointer: coarse) {
+  .status-select { font-size: 16px; min-height: 42px; }
+  .status-tabs button { min-height: 40px; }
+  .status-btns button { min-height: 42px; }
+}
+@media (max-width: 760px) {
+  .page-main { padding-block: 1.4rem 3rem; }
+  .card-box { padding: 1.2rem; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .status-tabs { flex-wrap: nowrap; overflow-x: auto; margin-inline: -16px; padding: 2px 16px; scrollbar-width: none; }
+  .status-tabs::-webkit-scrollbar { display: none; }
+  .status-tabs button { flex-shrink: 0; }
+  #search { max-width: none; }
+  .od-actions .btn { flex: 1; }
+}
+@media (max-width: 760px) {
+  /* admin on a phone: no sideways scrolling */
+  .admin .nav-inner { gap: .5rem; }
+  .admin .logo { font-size: 1.1rem; }
+  .admin .logo svg { width: 26px; height: 26px; }
+  .admin .head-actions { flex-wrap: nowrap; gap: .3rem; }
+  .admin .head-actions .btn { padding-inline: .8em; font-size: .8rem; }
+  .live { font-size: 0; gap: 0; }
+  .page-head > * { min-width: 0; }
+  .toolbar > * { min-width: 0; }
+  .status-tabs { width: calc(100% + 32px); }
+  .tr { grid-template-columns: minmax(0, 1fr) auto; }
+  .tr > span { min-width: 0; overflow-wrap: anywhere; }
+  .stat { min-width: 0; padding: .9rem; }
+  .stat b { overflow-wrap: anywhere; }
+}

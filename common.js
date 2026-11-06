@@ -1,7 +1,7 @@
 /* Shared helpers for account.html and admin.html */
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-const money = (n) => `${Math.round(n || 0).toLocaleString("ar-EG")} ${CONFIG.currency}`;
+const money = (n) => `${Math.round(n || 0).toLocaleString("ar-EG-u-nu-latn")} ${CONFIG.currency}`;
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const clReady = new Promise((r) => (window.CL ? r(window.CL) : document.addEventListener("cl-ready", () => r(window.CL), { once: true })));
 
@@ -12,7 +12,7 @@ const badge = (s) => `<span class="badge ${statusClass(s)}">${esc(s)}</span>`;
 
 const fmtDate = (ts) => {
   const d = ts?.toDate?.();
-  return d ? d.toLocaleString("ar-EG", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }) : "—";
+  return d ? d.toLocaleString("ar-EG-u-nu-latn", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }) : "—";
 };
 
 const itemsHtml = (items = []) => `<ul class="items">${items.map((i) => `

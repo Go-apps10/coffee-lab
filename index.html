@@ -2,13 +2,21 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Coffee Lab | توليفات بن مختصة</title>
   <meta name="description" content="Coffee Lab — توليفات بن طازة بتتحمص على الطلب. اختار توليفتك أو اعمل توليفتك الخاصة في المعمل.">
   <meta property="og:title" content="Coffee Lab | توليفات بن مختصة">
   <meta property="og:description" content="توليفات بن طازة بتتحمص على الطلب. اعمل توليفتك الخاصة.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://go-apps10.github.io/coffee-lab/">
+  <meta property="og:image" content="https://go-apps10.github.io/coffee-lab/icons/icon-512.png">
+  <link rel="canonical" href="https://go-apps10.github.io/coffee-lab/">
   <meta name="theme-color" content="#2b1a12">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Coffee Lab">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -39,11 +47,12 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12zM6 6 5 3H2M9 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span class="cart-count" id="cartCount">0</span>
       </button>
-      <button class="menu-btn" id="menuBtn" aria-label="القائمة"><span></span><span></span><span></span></button>
+      <button class="menu-btn" id="menuBtn" aria-label="القائمة" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
     </div>
   </div>
 </header>
 
+<noscript><p class="noscript">الموقع محتاج تشغيل JavaScript عشان تقدر تطلب.</p></noscript>
 <main>
   <!-- HERO -->
   <section class="hero">
@@ -198,6 +207,7 @@
         </div>
 
         <div class="lab-nav">
+          <div class="lab-progress" id="labProgress" aria-hidden="true"><div class="lab-bar" id="labBar"></div><b id="labBarText">0%</b></div>
           <button class="btn btn-ghost light" id="labBack">→ رجوع</button>
           <button class="btn btn-primary" id="labNext">الخطوة الجاية ←</button>
         </div>
@@ -271,6 +281,7 @@
 <footer class="footer">
   <div class="container footer-inner">
     <span>© <span id="year"></span> Coffee Lab. كل الحقوق محفوظة.</span>
+    <button class="install-btn" id="installBtn" hidden>📲 ثبّت الموقع كتطبيق</button>
     <a href="#top">لفوق ↑</a>
   </div>
 </footer>
@@ -295,7 +306,7 @@
 
 <!-- CART DRAWER -->
 <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
-<aside class="drawer" id="cartDrawer" aria-label="السلة">
+<aside class="drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-label="السلة" inert>
   <div class="drawer-head">
     <h3>سلتك</h3>
     <button class="close" id="cartClose" aria-label="إغلاق">×</button>
@@ -315,21 +326,30 @@
     <button type="button" class="close" data-close aria-label="إغلاق">×</button>
     <h3 id="coTitle">بيانات التوصيل</h3>
     <label class="field"><span>الاسم *</span><input name="name" required autocomplete="name"></label>
-    <label class="field"><span>رقم الموبايل *</span><input name="phone" required type="tel" pattern="01[0-9]{9}" placeholder="01xxxxxxxxx" autocomplete="tel"></label>
+    <label class="field"><span>رقم الموبايل *</span><input name="phone" required type="tel" inputmode="tel" dir="ltr" pattern="01[0-9]{9}" placeholder="01xxxxxxxxx" autocomplete="tel" enterkeyhint="next"></label>
     <div class="row-2">
-      <label class="field"><span>المحافظة *</span><select name="city" required id="citySelect"></select></label>
-      <label class="field"><span>المنطقة *</span><input name="area" required></label>
+      <label class="field"><span>المحافظة *</span><select name="city" required id="citySelect" autocomplete="address-level1"></select></label>
+      <label class="field"><span>المنطقة *</span><input name="area" required autocomplete="address-level2" enterkeyhint="next"></label>
     </div>
     <label class="field"><span>العنوان بالتفصيل *</span><input name="address" required autocomplete="street-address" placeholder="الشارع، رقم العمارة، الدور، الشقة"></label>
     <label class="field"><span>طريقة الدفع</span>
       <select name="payment"><option>كاش عند الاستلام</option><option>إنستاباي</option><option>فودافون كاش</option></select>
     </label>
     <label class="field"><span>ملاحظات</span><textarea name="notes" rows="2"></textarea></label>
+    <div class="sheet-foot">
     <div class="totals" id="coTotals"></div>
     <button class="btn btn-primary btn-block" type="submit" id="coSubmit">أكّد الطلب على واتساب</button>
     <p class="small muted center" id="coNote">هيتفتح واتساب برسالة فيها تفاصيل طلبك، اضغط إرسال.</p>
+    </div>
   </form>
 </div>
+
+<!-- MOBILE CART BAR -->
+<button class="cart-bar" id="cartBar" hidden>
+  <span class="cart-bar-count" id="cartBarCount">0</span>
+  <b>عرض السلة</b>
+  <span id="cartBarTotal"></span>
+</button>
 
 <!-- ORDER PLACED -->
 <div class="modal" id="successModal" hidden>
@@ -345,6 +365,7 @@
 <div class="toast" id="toast" role="status"></div>
 
 <script src="config.js"></script>
+<script src="ux.js" defer></script>
 <script src="firebase-config.js"></script>
 <script type="module" src="firebase.js"></script>
 <script src="script.js"></script>

@@ -2,11 +2,15 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>حسابي | Coffee Lab</title>
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#2b1a12">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Coffee Lab">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -94,9 +98,9 @@
         <h2>بيانات التوصيل</h2>
         <p class="muted small">بنستخدمها عشان نملالك بيانات الطلب أوتوماتيك.</p>
         <label class="field"><span>الاسم</span><input name="name" autocomplete="name"></label>
-        <label class="field"><span>رقم الموبايل</span><input name="phone" type="tel" pattern="01[0-9]{9}" placeholder="01xxxxxxxxx" autocomplete="tel"></label>
-        <label class="field"><span>المحافظة</span><select name="city" id="profileCity"></select></label>
-        <label class="field"><span>المنطقة</span><input name="area"></label>
+        <label class="field"><span>رقم الموبايل</span><input name="phone" type="tel" inputmode="tel" dir="ltr" pattern="01[0-9]{9}" placeholder="01xxxxxxxxx" autocomplete="tel"></label>
+        <label class="field"><span>المحافظة</span><select name="city" id="profileCity" autocomplete="address-level1"></select></label>
+        <label class="field"><span>المنطقة</span><input name="area" autocomplete="address-level2"></label>
         <label class="field"><span>العنوان بالتفصيل</span><input name="address" autocomplete="street-address"></label>
         <button class="btn btn-primary btn-block" type="submit">حفظ</button>
         <p class="form-msg" id="profileMsg" role="status"></p>
@@ -108,6 +112,7 @@
 <div class="toast" id="toast" role="status"></div>
 
 <script src="config.js"></script>
+<script src="ux.js" defer></script>
 <script src="firebase-config.js"></script>
 <script type="module" src="firebase.js"></script>
 <script src="common.js"></script>

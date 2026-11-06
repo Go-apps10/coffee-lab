@@ -2,7 +2,7 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const C = CONFIG;
-  const money = (n) => `${Math.round(n).toLocaleString("ar-EG")} ${C.currency}`;
+  const money = (n) => `${Math.round(n).toLocaleString("ar-EG-u-nu-latn")} ${C.currency}`;
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const options = (list) => list.map((v, i) => `<option value="${i}">${esc(typeof v === "string" ? v : v.label)}</option>`).join("");
 
@@ -33,8 +33,25 @@
   $("#citySelect").innerHTML = C.cities.map((c) => `<option>${esc(c)}</option>`).join("");
 
   /* ---------- Mobile menu ---------- */
-  $("#menuBtn").addEventListener("click", () => $("#navLinks").classList.toggle("open"));
-  $$("#navLinks a").forEach((a) => a.addEventListener("click", () => $("#navLinks").classList.remove("open")));
+  function setMenu(open) {
+    $("#navLinks").classList.toggle("open", open);
+    $("#menuBtn").setAttribute("aria-expanded", open);
+  }
+  $("#menuBtn").addEventListener("click", () => setMenu(!$("#navLinks").classList.contains("open")));
+  $$("#navLinks a").forEach((a) => a.addEventListener("click", () => setMenu(false)));
+  document.addEventListener("click", (e) => { if (!e.target.closest(".nav")) setMenu(false); });
+
+  /* ---------- Current section highlight in the menu ---------- */
+  const spy = new IntersectionObserver((entries) => {
+    entries.filter((e) => e.isIntersecting).forEach((e) => {
+      $$("#navLinks a").forEach((a) => {
+        const on = a.getAttribute("href") === `#${e.target.id}`;
+        a.classList.toggle("current", on);
+        if (on) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current");
+      });
+    });
+  }, { rootMargin: "-45% 0px -50% 0px" });
+  $$("#navLinks a").forEach((a) => { const s = $(a.getAttribute("href")); if (s) spy.observe(s); });
 
   /* ---------- Products ---------- */
   const meter = (n) => `<div class="meter">القوة <i>${[1, 2, 3, 4, 5].map((i) => `<b class="${i <= n ? "on" : ""}"></b>`).join("")}</i></div>`;
@@ -66,16 +83,50 @@
     renderProducts(b.dataset.filter);
   });
 
-  /* ---------- Modals ---------- */
-  function openModal(m) { m.hidden = false; document.body.style.overflow = "hidden"; }
-  function closeModal(m) { m.hidden = true; document.body.style.overflow = ""; }
+  /* ---------- Overlays: modals + cart drawer ---------- */
+  // shared behavior: scroll lock, focus trap, focus return, and the phone's back button closes instead of leaving the site
+  const overlays = new Set();
+  const FOCUSABLE = "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])";
+  let returnFocus = null;
+
+  function showOverlay(el) {
+    if (!overlays.size) returnFocus ||= document.activeElement;
+    overlays.add(el);
+    document.body.classList.add("locked");
+    if (!history.state?.overlay) history.pushState({ overlay: 1 }, "");
+    el.querySelector(FOCUSABLE)?.focus({ preventScroll: true });
+  }
+  function hideOverlay(el) {
+    if (!overlays.delete(el)) return;
+    // deferred so going from one overlay straight to another (cart -> checkout) keeps the lock and history entry
+    setTimeout(() => {
+      if (overlays.size) return;
+      document.body.classList.remove("locked");
+      returnFocus?.focus?.({ preventScroll: true });
+      returnFocus = null;
+      if (history.state?.overlay) history.back();
+    });
+  }
+  const closeOverlay = (el) => (el.classList.contains("modal") ? closeModal(el) : closeCart());
+
+  function openModal(m) { m.hidden = false; showOverlay(m); }
+  function closeModal(m) { m.hidden = true; hideOverlay(m); }
   $$(".modal").forEach((m) => {
     m.addEventListener("click", (e) => { if (e.target === m || e.target.closest("[data-close]")) closeModal(m); });
   });
+  window.addEventListener("popstate", () => [...overlays].forEach(closeOverlay));
   document.addEventListener("keydown", (e) => {
-    if (e.key !== "Escape") return;
-    $$(".modal").forEach((m) => !m.hidden && closeModal(m));
-    closeCart();
+    const top = [...overlays].at(-1);
+    if (e.key === "Escape") {
+      setMenu(false);
+      if (top) closeOverlay(top);
+    } else if (e.key === "Tab" && top) {
+      const items = $$(FOCUSABLE, top).filter((x) => x.offsetParent !== null);
+      const first = items[0], last = items.at(-1);
+      if (!top.contains(document.activeElement)) { e.preventDefault(); first?.focus(); }
+      else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
   });
 
   /* ---------- Product options modal ---------- */
@@ -138,6 +189,10 @@
   function renderCart() {
     const count = cart.reduce((s, i) => s + i.qty, 0);
     $("#cartCount").textContent = count;
+    $("#cartBtn").setAttribute("aria-label", `السلة، ${count} منتج`);
+    $("#cartBarCount").textContent = count;
+    $("#cartBarTotal").textContent = money(subtotal());
+    updateCartBar();
     $("#cartItems").innerHTML = cart.length
       ? cart.map((i, idx) => `
         <div class="cart-item">
@@ -171,14 +226,38 @@
       if (it.qty < 1) cart.splice(d.dataset.ci, 1);
       else it.qty = Math.min(20, it.qty);
       saveCart();
-    } else if (rm) { cart.splice(rm.dataset.rm, 1); saveCart(); }
+      // the list was re-rendered: keep keyboard focus on the same button
+      ($(`[data-ci="${d.dataset.ci}"][data-d="${d.dataset.d}"]`) || $("#cartClose")).focus({ preventScroll: true });
+    } else if (rm) { cart.splice(rm.dataset.rm, 1); saveCart(); $("#cartClose").focus({ preventScroll: true }); }
   });
 
-  function openCart() { $("#cartDrawer").classList.add("open"); $("#drawerBackdrop").hidden = false; }
-  function closeCart() { $("#cartDrawer").classList.remove("open"); $("#drawerBackdrop").hidden = true; }
+  function openCart() {
+    const d = $("#cartDrawer");
+    d.inert = false;
+    d.classList.add("open");
+    $("#drawerBackdrop").hidden = false;
+    showOverlay(d);
+  }
+  function closeCart() {
+    const d = $("#cartDrawer");
+    d.classList.remove("open");
+    d.inert = true;
+    $("#drawerBackdrop").hidden = true;
+    hideOverlay(d);
+  }
   $("#cartBtn").addEventListener("click", openCart);
+  $("#cartBar").addEventListener("click", openCart);
   $("#cartClose").addEventListener("click", closeCart);
   $("#drawerBackdrop").addEventListener("click", closeCart);
+
+  /* ---------- Mobile cart bar (hidden while the lab's own bottom bar is on screen) ---------- */
+  let labInView = false;
+  function updateCartBar() {
+    const show = cart.length > 0 && !labInView;
+    $("#cartBar").hidden = !show;
+    document.body.classList.toggle("has-cart-bar", show);
+  }
+  new IntersectionObserver(([e]) => { labInView = e.isIntersecting; updateCartBar(); }).observe($(".lab-app"));
   renderCart();
 
   /* ---------- Accounts (firebase.js) ---------- */
@@ -202,17 +281,21 @@
   });
 
   /* ---------- Checkout ---------- */
+  // remembers delivery details on this device for guests (signed-in customers use their profile)
+  const delivery = {
+    get() { try { return JSON.parse(localStorage.getItem("cl_delivery")) || {}; } catch { return {}; } },
+    set(v) { try { localStorage.setItem("cl_delivery", JSON.stringify(v)); } catch {} },
+  };
+
   function startCheckout() {
     const sub = subtotal(), ship = shippingFor(sub);
     $("#coTotals").innerHTML = `
       <div><span>المنتجات</span><span>${money(sub)}</span></div>
       <div><span>الشحن</span><span>${ship ? money(ship) : "مجاني"}</span></div>
       <div class="grand"><span>الإجمالي</span><span>${money(sub + ship)}</span></div>`;
-    const p = accountsOn() && window.CL.user ? { name: window.CL.user.displayName, ...window.CL.profile } : null;
-    if (p) {
-      const f = $("#checkoutForm").elements;
-      ["name", "phone", "city", "area", "address"].forEach((k) => { if (p[k] && !f[k].value) f[k].value = p[k]; });
-    }
+    const p = accountsOn() && window.CL.user ? { name: window.CL.user.displayName, ...window.CL.profile } : delivery.get();
+    const f = $("#checkoutForm").elements;
+    ["name", "phone", "city", "area", "address"].forEach((k) => { if (p[k] && !f[k].value) f[k].value = p[k]; });
     closeCart();
     openModal($("#checkoutModal"));
   }
@@ -229,6 +312,7 @@
 
   $("#checkoutForm").addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (!navigator.onLine) { toast("مفيش إنترنت دلوقتي — طلبك لسه محفوظ في السلة، جرّب تاني لما النت يرجع."); return; }
     const f = Object.fromEntries(new FormData(e.target));
     const sub = subtotal(), ship = shippingFor(sub);
 
@@ -275,6 +359,7 @@
       f.notes ? `ملاحظات: ${f.notes}` : "",
     ].filter((l, i, a) => !(l === "" && a[i - 1] === ""));
     window.open(`https://wa.me/${C.whatsapp}?text=${encodeURIComponent(lines.join("\n"))}`, "_blank");
+    delivery.set({ name: f.name, phone: f.phone, city: f.city, area: f.area, address: f.address });
     cart = [];
     saveCart();
     e.target.reset();

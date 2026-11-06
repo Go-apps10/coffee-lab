@@ -180,3 +180,34 @@
   .notebook ul { columns: 1; }
   .lab-stage { min-height: 0; }
 }
+
+/* ---- Bottom bar: progress + next, reachable at any scroll position ---- */
+.lab-nav { position: sticky; bottom: 0; z-index: 5; align-items: center; margin: 1.6rem -1.6rem -1.6rem; padding: .9rem 1.6rem calc(.9rem + env(safe-area-inset-bottom)); background: rgba(24, 14, 9, .97); border-top: 1px solid rgba(233,201,154,.18); border-radius: 0 0 26px 26px; }
+.lab-progress { flex: 1; display: flex; align-items: center; gap: .8rem; min-width: 0; }
+.lab-bar { flex: 1; height: 12px; border-radius: 6px; overflow: hidden; display: flex; background: rgba(255,255,255,.1); }
+.lab-bar i { display: block; height: 100%; transition: width .3s; }
+.lab-progress b { font-family: var(--latin); color: var(--crema); min-width: 4ch; text-align: end; }
+#roastSlider { touch-action: pan-y; }
+.report-card .link-btn { padding: .4rem; }
+
+@media (hover: none) {
+  .jar:hover:not(:disabled) .jar-glass { transform: none; border-color: var(--glass); }
+  .jar:active:not(:disabled) .jar-glass { transform: translateY(-4px) rotate(-4deg); }
+}
+@media (pointer: coarse) {
+  .mix-row button { width: 40px; height: 40px; }
+  #roastSlider { height: 14px; }
+}
+@media (max-width: 640px) {
+  .lab-nav { margin: 1.2rem -1rem -1rem; padding-inline: 1rem; border-radius: 0 0 18px 18px; }
+  .lab-nav .btn { padding-inline: 1em; }
+  .stage-hint { font-size: .92rem; margin-bottom: 1rem; }
+
+  /* one swipeable shelf, so jars and beaker fit on the same screen */
+  .shelf { display: grid; grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 30%; gap: .5rem; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; margin-inline: -1rem; padding: .4rem 1rem .8rem; border-radius: 0; }
+  .shelf::-webkit-scrollbar { display: none; }
+  .jar { scroll-snap-align: center; }
+  .jar small { display: none; }
+  .mix-area { margin-top: 3.2rem; }
+  .beaker-big { width: 120px; height: 150px; }
+}

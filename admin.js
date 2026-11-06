@@ -74,7 +74,7 @@
       ["العملاء", new Set(state.orders.map((o) => o.uid)).size, `متوسط الطلب ${money(live.length ? sum(live) / live.length : 0)}`],
     ];
     $("#stats").innerHTML = cards.map(([label, val, sub, cls = ""]) =>
-      `<div class="stat ${cls}"><span>${label}</span><b>${typeof val === "number" ? val.toLocaleString("ar-EG") : val}</b><small>${sub}</small></div>`).join("");
+      `<div class="stat ${cls}"><span>${label}</span><b>${typeof val === "number" ? val.toLocaleString("ar-EG-u-nu-latn") : val}</b><small>${sub}</small></div>`).join("");
   }
 
   /* ---------- Filters ---------- */

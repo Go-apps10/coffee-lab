@@ -71,7 +71,15 @@
       if (!state.scoops[id]) return;
       if (--state.scoops[id] === 0) { delete state.scoops[id]; state.order = state.order.filter((x) => x !== id); }
     }
+    navigator.vibrate?.(8);
+    // the buttons get re-rendered: keep keyboard focus on the one that was pressed
+    const f = document.activeElement?.dataset || {};
+    const sel = f.o ? `[data-o="${f.o}"]` : f.minus ? `[data-minus="${f.minus}"]` : f.plus ? `[data-plus="${f.plus}"]` : null;
     renderShelf(); renderBeaker(); renderNotebook(); renderNav();
+    if (sel) {
+      const el = $(sel);
+      (el && !el.disabled ? el : $("#labNext")).focus({ preventScroll: true });
+    }
   }
 
   $("#shelf").addEventListener("click", (e) => { const b = e.target.closest("[data-o]"); if (b && !b.disabled) scoop(b.dataset.o, 1); });
@@ -112,7 +120,7 @@
     if (g === null) { $("#grounds").innerHTML = `<span class="tray-empty">الطبق فاضي</span>`; return; }
     $("#grindDial").style.transform = `rotate(${-80 + g * 40}deg)`;
     const size = GRIND_SIZES[g] ?? 4;
-    const count = size ? Math.min(360, Math.round(9000 / (size * size + 6))) : 22;
+    const count = size ? Math.min(240, Math.round(9000 / (size * size + 6))) : 22;
     $("#grounds").innerHTML = Array.from({ length: count }, () => {
       const s = size ? size * (0.7 + Math.random() * 0.6) : 0;
       const delay = animate ? (Math.random() * 0.6).toFixed(2) : 0;
@@ -240,6 +248,10 @@
     $("#labNext").hidden = state.step === 3;
     $("#labNext").disabled = state.step >= reach;
     $("#labNext").textContent = state.step === 2 ? "حلّل التجربة 🔬" : "الخطوة الجاية ←";
+    // always-visible fill level, so a phone user tapping jars can see it without scrolling to the beaker
+    $("#labProgress").hidden = state.step !== 0;
+    $("#labBar").innerHTML = state.order.map((id) => `<i style="background:${origin(id).color};width:${state.scoops[id] * SCOOP}%"></i>`).join("");
+    $("#labBarText").textContent = `${total()}%`;
   }
 
   function go(n) {
