@@ -1,8 +1,8 @@
 /* Offline support. Pages and files are always fetched fresh when online (so price edits in config.js show
    immediately); the saved copy is only used when there's no connection. Orders and accounts never go through here. */
-const CACHE = "coffee-lab-v1";
+const CACHE = "coffee-lab-v2";
 const SHELL = ["./", "index.html", "account.html", "styles.css", "lab.css", "pages.css", "config.js", "firebase-config.js",
-  "firebase.js", "common.js", "ux.js", "script.js", "lab.js", "account.js", "favicon.svg", "manifest.webmanifest", "icons/icon-192.png"];
+  "firebase.js", "common.js", "ux.js", "coffee-data.js", "script.js", "lab.js", "account.js", "favicon.svg", "manifest.webmanifest", "icons/icon-192.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => Promise.allSettled(SHELL.map((u) => c.add(u)))).then(() => self.skipWaiting()));

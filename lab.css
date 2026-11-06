@@ -211,3 +211,52 @@
   .mix-area { margin-top: 3.2rem; }
   .beaker-big { width: 120px; height: 150px; }
 }
+
+/* ---- Big shelf: search, filters, bean details ---- */
+.shelf-tools { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: .5rem; align-items: center; margin-bottom: 1rem; }
+.shelf-tools input, .shelf-tools select { width: 100%; min-width: 0; padding: .55em .8em; border-radius: 12px; border: 1px solid rgba(233,201,154,.28); background: rgba(255,255,255,.07); color: var(--milk); outline: none; }
+.shelf-tools input::placeholder { color: rgba(233,201,154,.65); }
+.shelf-tools select option { color: var(--ink); }
+.shelf-tools input:focus, .shelf-tools select:focus { border-color: var(--caramel); }
+.shelf-count { color: var(--crema); font-size: .85rem; white-space: nowrap; }
+.shelf { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 1rem .6rem; max-height: 470px; overflow-y: auto; overscroll-behavior: contain; padding: .5rem .3rem 1rem; scrollbar-color: var(--caramel) transparent; scrollbar-width: thin; }
+.jar-cell { position: relative; min-width: 0; }
+.jar { width: 100%; }
+.jar-price { display: block; margin-top: .2rem; font-style: normal; font-weight: 700; font-size: .75rem; color: var(--caramel); }
+.jar-info { position: absolute; top: 12px; inset-inline-end: 8%; z-index: 3; width: 24px; height: 24px; padding: 0; border-radius: 50%; border: 1px solid rgba(233,201,154,.5); background: rgba(20,12,8,.8); color: var(--crema); font-family: var(--latin); font-size: .8rem; line-height: 1; }
+.jar-info:hover { background: var(--caramel); color: #fff; }
+.shelf-empty { grid-column: 1 / -1; margin: 0; padding: 2.5rem 1rem; text-align: center; color: var(--crema); }
+
+.bean-where { margin: 0 0 1rem; color: var(--muted); font-size: .9rem; }
+#beanTitle { margin: .2rem 0 .2rem; padding-inline-end: 2.6rem; }
+.bean-bars { display: grid; gap: .35rem; margin-bottom: 1rem; }
+.bean-bar { display: grid; grid-template-columns: 56px 1fr; align-items: center; gap: .6rem; font-size: .82rem; color: var(--muted); }
+.bean-bar i { display: block; height: 8px; border-radius: 4px; overflow: hidden; background: var(--milk); }
+.bean-bar b { display: block; height: 100%; border-radius: 4px; background: var(--caramel); }
+.bean-facts { margin: 0 0 1rem; font-size: .9rem; }
+.bean-facts div { display: grid; grid-template-columns: 72px 1fr; gap: .6rem; padding: .45rem 0; border-bottom: 1px dashed var(--line); }
+.bean-facts dt { color: var(--muted); }
+.bean-facts dd { margin: 0; font-weight: 600; }
+.bean-facts small { display: block; margin-top: .1rem; font-weight: 400; color: var(--muted); font-size: .78rem; line-height: 1.5; }
+.bean-disclaimer { margin: 0 0 .9rem; font-size: .75rem; color: var(--muted); }
+
+@media (pointer: coarse) {
+  .jar-info { width: 34px; height: 34px; top: 8px; inset-inline-end: 2%; }
+}
+@media (max-width: 960px) {
+  .shelf-tools { grid-template-columns: 1fr 1fr 1fr; }
+  .shelf-tools input { grid-column: 1 / -2; }
+  .shelf-count { text-align: end; }
+}
+@media (max-width: 640px) {
+  .shelf-tools { grid-template-columns: 1fr 1fr; }
+  .shelf-tools input { grid-column: 1; }
+  .shelf-tools select { font-size: 16px; padding-inline: .5em; }
+  .shelf { max-height: none; overflow-y: hidden; grid-template-columns: none; grid-auto-columns: 34%; gap: .5rem; padding: .4rem 1rem .8rem; }
+  .jar-cell { scroll-snap-align: center; }
+  .shelf-empty { width: calc(100vw - 64px); }
+}
+
+/* the long swipeable shelf must never widen the page */
+.lab-bench > *, .stage { min-width: 0; }
+@media (max-width: 960px) { .lab-bench { grid-template-columns: minmax(0, 1fr); } }

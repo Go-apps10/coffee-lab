@@ -3,7 +3,7 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const C = CONFIG;
-  const { addToCart, money, esc, options } = window.CoffeeLab;
+  const { addToCart, money, esc, options, openModal, closeModal } = window.CoffeeLab;
 
   const AXES = ["حموضة", "قوام", "حلاوة", "مرارة", "عطرية"];
   const GRIND_SIZES = [0, 2, 3, 5, 8];         // particle size (px) for each entry in CONFIG.grinds; 0 = whole beans
@@ -30,17 +30,63 @@
   const mixText = () => state.order.map((id) => `${origin(id).name} ${state.scoops[id] * SCOOP}%`).join(" + ");
 
   /* ---------- Stage 1: samples ---------- */
+  const filters = { q: "", region: "", family: "", species: "" };
+  const norm = (s) => s.toLowerCase().replace(/[أإآ]/g, "ا").replace(/ى/g, "ي").replace(/ة/g, "ه");
+  const visibleOrigins = () => {
+    const q = norm(filters.q.trim());
+    return C.origins.filter((o) =>
+      (!filters.region || o.region === filters.region) &&
+      (!filters.family || o.families.includes(filters.family)) &&
+      (!filters.species || o.species === filters.species) &&
+      (!q || norm([o.name, o.country, o.region, o.species, o.variety, o.process, o.note, ...o.families].join(" ")).includes(q)));
+  };
+
   function renderShelf() {
     const full = total() >= 100;
-    $("#shelf").innerHTML = C.origins.map((o) => {
+    const list = visibleOrigins();
+    $("#shelfCount").textContent = `${list.length} نوع`;
+    $("#shelf").innerHTML = list.length ? list.map((o) => {
       const n = state.scoops[o.id] || 0;
-      const can = !full;
-      return `<button class="jar ${n ? "active" : ""}" data-o="${o.id}" style="--c:${o.color}" ${can ? "" : "disabled"} aria-label="صب ${esc(o.name)}">
-        ${n ? `<span class="jar-count">${n * SCOOP}%</span>` : ""}
-        <div class="jar-lid"></div><div class="jar-glass"></div>
-        <b>${esc(o.name)}</b><small>${esc(o.note)}</small></button>`;
-    }).join("");
+      return `<div class="jar-cell">
+        <button class="jar ${n ? "active" : ""}" data-o="${o.id}" style="--c:${o.color}" ${full ? "disabled" : ""} aria-label="صب ${esc(o.name)}">
+          ${n ? `<span class="jar-count">${n * SCOOP}%</span>` : ""}
+          <div class="jar-lid"></div><div class="jar-glass"></div>
+          <b>${esc(o.name)}</b><small>${esc(o.note)}</small><em class="jar-price">${money(o.price)}</em>
+        </button>
+        <button class="jar-info" data-info="${o.id}" aria-label="تفاصيل ${esc(o.name)}">i</button>
+      </div>`;
+    }).join("") : `<p class="shelf-empty">مفيش نوع بالمواصفات دي — غيّر البحث أو الفلتر.</p>`;
   }
+
+  $("#shelfRegion").innerHTML += COFFEE_REGIONS.map((v) => `<option>${esc(v)}</option>`).join("");
+  $("#shelfFamily").innerHTML += COFFEE_FAMILIES.map((v) => `<option>${esc(v)}</option>`).join("");
+  $("#shelfSpecies").innerHTML += COFFEE_SPECIES.map((v) => `<option>${esc(v)}</option>`).join("");
+  [["#shelfSearch", "q"], ["#shelfRegion", "region"], ["#shelfFamily", "family"], ["#shelfSpecies", "species"]].forEach(([sel, key]) =>
+    $(sel).addEventListener("input", (e) => { filters[key] = e.target.value; renderShelf(); $("#shelf").scrollTo(0, 0); }));
+
+  /* ---------- Bean details ---------- */
+  let infoId = null;
+  $("#shelf").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-info]");
+    if (!b) return;
+    infoId = b.dataset.info;
+    const o = origin(infoId);
+    $("#beanTitle").textContent = o.name;
+    $("#beanWhere").textContent = `${o.country} · ${o.region}`;
+    $("#beanBars").innerHTML = AXES.map((a, i) =>
+      `<div class="bean-bar"><span>${a}</span><i><b style="width:${o.profile[i] * 10}%"></b></i></div>`).join("");
+    $("#beanFacts").innerHTML = [
+      ["النكهات", esc(o.note)],
+      ["النوع", esc(o.species)],
+      ["الصنف", `${esc(o.variety)}<small>${esc(COFFEE_VARIETIES[o.variety] || "")}</small>`],
+      ["المعالجة", `${esc(o.process)}<small>${esc(COFFEE_PROCESSES[o.process] || "")}</small>`],
+      ["الارتفاع", esc(o.alt)],
+      ["السعر", `${money(o.price)} / 250 جم`],
+    ].map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
+    $("#beanAdd").disabled = total() >= 100;
+    openModal($("#beanModal"));
+  });
+  $("#beanAdd").addEventListener("click", () => { closeModal($("#beanModal")); scoop(infoId, 1); });
 
   function renderBeaker() {
     const t = total();
@@ -184,7 +230,7 @@
     drawRadar(vals);
     const top = vals.map((v, i) => [v, AXES[i]]).sort((a, b) => b[0] - a[0]).slice(0, 2).map((x) => x[1]);
     $("#radarSum").innerHTML = `بصمة توليفتك: <b>عالية في ال${top[0]} وال${top[1]}</b>`;
-    const notes = [...new Set(state.order.flatMap((id) => origin(id).note.split(" · ")))].join(" · ");
+    const notes = [...new Set(state.order.flatMap((id) => origin(id).note.split(" · ")))].slice(0, 6).join(" · ");
     $("#reportNo").textContent = `#${state.expNo}`;
     $("#reportList").innerHTML = [
       ["المعادلة", esc(mixText())],

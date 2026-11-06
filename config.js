@@ -46,16 +46,7 @@ const CONFIG = {
       notes: ["كاكاو", "دخاني", "قوام تقيل"] },
   ],
 
-  // أنواع البن المتاحة في "اعمل توليفتك" — السعر لكل 250 جم
-  // profile = [حموضة، قوام، حلاوة، مرارة، عطرية] من 1 لـ 10 — بيترسم في "تحليل المعمل"
-  origins: [
-    { id: "brazil",   name: "برازيلي",   note: "شوكولاتة · بندق",  price: 260, color: "#5a3420", profile: [3, 7, 7, 5, 5] },
-    { id: "colombia", name: "كولومبي",   note: "كراميل · فواكه",   price: 340, color: "#8c4a2a", profile: [6, 6, 7, 4, 6] },
-    { id: "ethiopia", name: "إثيوبي",    note: "زهور · حمضيات",    price: 400, color: "#c27a46", profile: [9, 4, 6, 2, 9] },
-    { id: "yemen",    name: "يمني",      note: "توابل · نبيذي",     price: 480, color: "#6e2f1f", profile: [6, 7, 6, 5, 8] },
-    { id: "kenya",    name: "كيني",      note: "توت · حموضة",      price: 420, color: "#a3502f", profile: [9, 5, 5, 3, 7] },
-    { id: "india",    name: "هندي روبوستا", note: "قوة · كريما",   price: 220, color: "#2f1c12", profile: [2, 9, 3, 9, 3] },
-  ],
+  // أنواع البن في "اعمل توليفتك" موجودة في ملف coffee-data.js
 
   labFee: 20, // رسوم إضافية على التوليفة الخاصة (لكل 250 جم)
 

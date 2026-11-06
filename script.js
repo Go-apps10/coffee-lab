@@ -168,7 +168,7 @@
   });
 
 
-  window.CoffeeLab = { addToCart: (i) => addToCart(i), money, esc, options };
+  window.CoffeeLab = { addToCart: (i) => addToCart(i), money, esc, options, openModal, closeModal };
 
   /* ---------- Cart ---------- */
   const subtotal = () => cart.reduce((s, i) => s + i.unit * i.qty, 0);
