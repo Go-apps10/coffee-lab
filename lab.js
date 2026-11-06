@@ -15,7 +15,6 @@
     "خشنة — للفرنش برس والكولد برو.",
   ];
   const SCOOP = 10; // percent per scoop
-  const MAX_ORIGINS = 3;
 
   const app = $(".lab");
   const state = { step: 0, scoops: {}, order: [], roast: 50, grind: null, expNo: 0, roastVisited: false };
@@ -35,7 +34,7 @@
     const full = total() >= 100;
     $("#shelf").innerHTML = C.origins.map((o) => {
       const n = state.scoops[o.id] || 0;
-      const can = !full && (n > 0 || state.order.length < MAX_ORIGINS);
+      const can = !full;
       return `<button class="jar ${n ? "active" : ""}" data-o="${o.id}" style="--c:${o.color}" ${can ? "" : "disabled"} aria-label="صب ${esc(o.name)}">
         ${n ? `<span class="jar-count">${n * SCOOP}%</span>` : ""}
         <div class="jar-lid"></div><div class="jar-glass"></div>
@@ -61,7 +60,6 @@
   function scoop(id, d) {
     if (d > 0) {
       if (total() >= 100) return;
-      if (!state.scoops[id] && state.order.length >= MAX_ORIGINS) return;
       state.scoops[id] = (state.scoops[id] || 0) + 1;
       if (!state.order.includes(id)) state.order.push(id);
       const p = $("#pour");
